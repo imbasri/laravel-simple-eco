@@ -29,10 +29,10 @@ class ProductController extends Controller
         // input file dari request
         $file = $request->file('image');
         // setup nama file dengan format time + name + extension
-        $path = time() . '_' . $request->name . $file->getClientOriginalExtension();
+        $path = time() . '_' . $request->name . "." . $file->getClientOriginalExtension();
 
         // simpan distorage local dengan folder public dan nama file $path dan file_get_contents adalah untuk membaca file
-        Storage::disk('local')->put('public/', $path, file_get_contents($file));
+        Storage::disk('local')->put('public/images/' . $path, file_get_contents($file));
 
         // save dengan modal Product
         Product::create([
@@ -45,5 +45,12 @@ class ProductController extends Controller
 
         //return redirect route create product
         return Redirect::route('create_product')->with('success', 'Product created successfully');
+    }
+
+    //show product
+    public function index_product()
+    {
+        $products = Product::all();
+        return view('index_product', compact('products'));
     }
 }
