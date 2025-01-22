@@ -8,16 +8,19 @@
 </head>
 
 <body>
-    @foreach ($products as $product)
-        <ul>
+    <div style="display:flex; align-items:center; gap: 20px;">
+        @foreach ($products as $product)
+            <div>
+                <p>{{ $product->name }}</p>
+                <img src="{{ url('/storage/images/' . $product->image) }}" alt="product_image" width="100"
+                    height="100">
 
-            <li>{{ $product->name }}</li>
-            <li>{{ $product->description }}</li>
-            <li>{{ $product->price }}</li>
-            <li>{{ $product->stock }}</li>
-                <img src="{{ url('/storage/images/' . $product->image) }}" alt="product_image" width="100" height="100">
-        </ul>
-    @endforeach
+                <form action="{{ route('show_product', $product) }}" method="get">
+                    <button>Show</button>
+                </form>
+            </div>
+        @endforeach
+    </div>
 </body>
 
 </html>
