@@ -18,6 +18,12 @@
         @csrf
         <button>Edit</button>
     </form>
+
+    <form action="{{ route('add_to_cart', $product) }}" method="post">
+        @csrf
+        <input type="number" name="amount" id="amount" value="1">
+        <button>Add to Cart</button>
+    </form>
 </body>
 
 </html>
