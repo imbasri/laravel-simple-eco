@@ -96,4 +96,16 @@ class ProductController extends Controller
         //return redirect route create product
         return Redirect::route('index_product')->with('success', 'Product updated successfully');
     }
+
+    // delete product
+    public function delete_product(Product $product)
+    {
+        // hapus file di storage local agar tidak penuh
+        Storage::disk('local')->delete('public/images/' . $product->image);
+        // hapus data di database
+        $product->delete();
+        // redirect kembali ke halaman index
+        return Redirect::route('index_product')->with('success', 'Product deleted successfully');
+
+    }
 }

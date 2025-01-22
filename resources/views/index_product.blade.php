@@ -14,10 +14,16 @@
                 <p>{{ $product->name }}</p>
                 <img src="{{ url('/storage/images/' . $product->image) }}" alt="product_image" width="100"
                     height="100">
-
-                <form action="{{ route('show_product', $product) }}" method="get">
-                    <button>Show</button>
-                </form>
+                <div style="display:flex; gap: 10px;">
+                    <form action="{{ route('show_product', $product) }}" method="get">
+                        <button>Show</button>
+                    </form>
+                    <form action="{{ route('delete_product', $product) }}" method="post" onsubmit="return confirm('Are you sure?')">
+                        @method('DELETE')
+                        @csrf
+                        <button>Delete</button>
+                    </form>
+                </div>
             </div>
         @endforeach
     </div>

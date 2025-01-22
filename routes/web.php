@@ -31,3 +31,4 @@ Route::get('/products', [ProductController::class, 'index_product'])->name('inde
 Route::get('/product/{product}', [ProductController::class, 'show_product'])->name('show_product');
 Route::get('/product/{product}/edit', [ProductController::class, 'edit_product'])->name('edit_product');
 Route::patch('/product/{product}', [ProductController::class, 'update_product'])->name('update_product');
+Route::delete('/product/{product}', [ProductController::class, 'delete_product'])->name('delete_product');
