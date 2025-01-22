@@ -57,4 +57,43 @@ class ProductController extends Controller
     {
         return view('show_product', compact('product'));
     }
+
+    public function edit_product(Product $product)
+    {
+        return view('edit_product', compact('product'));
+    }
+
+    public function update_product(Request $request, Product $product)
+    {
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required',
+            'stock' => 'required',
+            'description' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
+
+        // input file dari request
+        $file = $request->file('image');
+        // setup nama file dengan format time + name + extension
+        $path = time() . '_' . $request->name . "." . $file->getClientOriginalExtension();
+
+        // delete file lama
+        Storage::disk('local')->delete('public/images/' . $product->image);
+
+        // simpan distorage local dengan folder public dan nama file $path dan file_get_contents adalah untuk membaca file
+        Storage::disk('local')->put('public/images/' . $path, file_get_contents($file));
+
+        // update dengan model Product
+        $product->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'description' => $request->description,
+            'image' => $path
+        ]);
+
+        //return redirect route create product
+        return Redirect::route('index_product')->with('success', 'Product updated successfully');
+    }
 }

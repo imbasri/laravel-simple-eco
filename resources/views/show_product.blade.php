@@ -14,7 +14,10 @@
     <p>Price: Rp.{{ $product->price }}</p>
     <p>Stock: {{ $product->stock }}</p>
     <img src="{{ url('/storage/images/' . $product->image) }}" alt="product_image" width="100" height="100">
-
+    <form action="{{ route('edit_product', $product) }}" method="get">
+        @csrf
+        <button>Edit</button>
+    </form>
 </body>
 
 </html>
