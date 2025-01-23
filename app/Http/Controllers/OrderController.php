@@ -46,4 +46,12 @@ class OrderController extends Controller
         }
         return Redirect::back()->with('success', 'Checkout success');
     }
+
+    public function index_order()
+    {
+        $order = Order::all();
+        return view('index_order', compact('order'));
+    }
+
+
 }
