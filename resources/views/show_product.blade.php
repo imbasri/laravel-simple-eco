@@ -8,6 +8,7 @@
 </head>
 
 <body>
+
     <a href="{{ route('index_product') }}">Back</a>
     <p>Name: {{ $product->name }}</p>
     <p>Description: {{ $product->description }}</p>
@@ -23,6 +24,11 @@
         @csrf
         <input type="number" name="amount" id="amount" value="1">
         <button>Add to Cart</button>
+        @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    @endif
     </form>
 </body>
 

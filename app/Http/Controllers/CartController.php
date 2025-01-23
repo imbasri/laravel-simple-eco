@@ -19,21 +19,33 @@ class CartController extends Controller
     //add to cart
     public function add_to_cart(Product $product, Request $request)
     {
-        // gte = greater than or equal
-        $request->validate([
-            'amount' => 'required|gte:1|lte:' . $product->stock
-        ]);
-
         $user_id = Auth::id();
         $product_id = $product->id;
+        $existing_cart = Cart::where('product_id', $product_id)
+            ->where('user_id', $user_id)
+            ->first();
 
-        Cart::create([
-            'user_id' => $user_id,
-            'product_id' => $product_id,
-            'amount' => $request->amount
-        ]);
+        if ($existing_cart == null) {
+            // gte = greater than or equal
+            $request->validate([
+                'amount' => 'required|gte:1|lte:' . $product->stock
+            ]);
 
-        return Redirect::route('index_product')->with('success', 'Product added to cart successfully');
+            Cart::create([
+                'user_id' => $user_id,
+                'product_id' => $product_id,
+                'amount' => $request->amount
+            ]);
+        } else {
+            $request->validate([
+                'amount' => 'required|gte:1|lte:' . ($product->stock - $existing_cart->amount)
+            ]);
+            $existing_cart->update([
+                'amount' => $existing_cart->amount + $request->amount
+            ]);
+        }
+
+        return Redirect::route('show_cart')->with('success', 'Product added to cart successfully');
     }
 
     public function show_cart()
@@ -43,7 +55,7 @@ class CartController extends Controller
         return view('show_cart', compact('carts'));
     }
 
-    public function update_cart(Cart $cart, Request $request)
+    public function update_cart(Request $request, Cart $cart)
     {
         $request->validate([
             'amount' => 'required|gte:1|lte:' . $cart->product->stock
