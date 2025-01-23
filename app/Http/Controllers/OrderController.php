@@ -53,5 +53,8 @@ class OrderController extends Controller
         return view('index_order', compact('order'));
     }
 
-
+    public function show_order(Order $order)
+    {
+        return view('show_order', compact('order'));
+    }
 }
