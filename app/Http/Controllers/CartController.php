@@ -55,4 +55,10 @@ class CartController extends Controller
 
         return Redirect::route('show_cart')->with('success', 'Cart updated successfully');
     }
+
+    public function delete_cart(Cart $cart)
+    {
+        $cart->delete();
+        return Redirect::route('show_cart')->with('success', 'Cart deleted successfully');
+    }
 }

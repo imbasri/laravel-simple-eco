@@ -28,6 +28,11 @@
                     <button>Update</button>
                 </form>
             </div>
+            <form action="{{ route('delete_cart', $cart) }}" method="post" onsubmit="return confirm('Are you sure?')">
+                @csrf
+                @method('DELETE')
+                <button>Delete</button>
+            </form>
         @endforeach
     </div>
 
