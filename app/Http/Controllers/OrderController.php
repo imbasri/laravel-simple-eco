@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -56,5 +57,25 @@ class OrderController extends Controller
     public function show_order(Order $order)
     {
         return view('show_order', compact('order'));
+    }
+
+    public function submit_payment_receipt(Order $order, Request $request)
+    {
+        // input file dari request
+        $file = $request->file('payment_receipt');
+
+        // check jika file kosong
+        if ($file == null) {
+            return Redirect::back()->with('error', 'Please upload payment receipt');
+        }
+        // setup nama file dengan format time + name + extension
+        $path = time() . '_' . $order->id . "." . $file->getClientOriginalExtension();
+        // simpan distorage local dengan folder public dan nama file $path dan file_get_contents adalah untuk membaca file
+        Storage::disk('local')->put('public/payment/' . $path, file_get_contents($file));
+        $order->update([
+            'payment_receipt' => $path
+        ]);
+
+        return Redirect::back()->with('success', 'Payment receipt uploaded successfully');
     }
 }
