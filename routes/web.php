@@ -38,3 +38,4 @@ Route::delete('/product/{product}', [ProductController::class, 'delete_product']
 // cart
 
 Route::post('/cart/{product}', [CartController::class, 'add_to_cart'])->name('add_to_cart');
+Route::get('/cart', [CartController::class, 'show_cart'])->name('show_cart');

@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Redirect;
 
 class CartController extends Controller
 {
+    // check login
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     //add to cart
     public function add_to_cart(Product $product, Request $request)
     {
@@ -22,14 +28,18 @@ class CartController extends Controller
         $product_id = $product->id;
 
         Cart::create([
-            'user_id'=>$user_id,
-            'product_id'=>$product_id,
-            'amount'=>$request->amount
+            'user_id' => $user_id,
+            'product_id' => $product_id,
+            'amount' => $request->amount
         ]);
 
         return Redirect::route('index_product')->with('success', 'Product added to cart successfully');
     }
 
-    //remove from cart
-    public function remove_from_cart() {}
+    public function show_cart()
+    {
+        $user_id = Auth::id();
+        $carts = Cart::where('user_id', $user_id)->get();
+        return view('show_cart', compact('carts'));
+    }
 }
