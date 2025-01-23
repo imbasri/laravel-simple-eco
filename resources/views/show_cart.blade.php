@@ -40,6 +40,12 @@
         @csrf
         <button type="submit">Back</button>
     </form>
+
+    <form action="{{ route('checkout') }}" method="post">
+        @csrf
+
+        <button type="submit">Checkout</button>
+    </form>
 </body>
 
 </html>
