@@ -20,7 +20,7 @@ class OrderController extends Controller
         $cart = Cart::where('user_id', $user_id)->get();
 
         if ($cart->isEmpty()) {
-            Redirect::back()->with('error', 'Cart is empty');
+            return Redirect::back()->with('error', 'Cart is empty');
         }
 
         $order = Order::create([
@@ -77,5 +77,13 @@ class OrderController extends Controller
         ]);
 
         return Redirect::back()->with('success', 'Payment receipt uploaded successfully');
+    }
+
+    public function confirm_payment(Order $order)
+    {
+        $order->update([
+            'is_paid' => true
+        ]);
+        return Redirect::back()->with('success', 'Payment confirmed');
     }
 }
