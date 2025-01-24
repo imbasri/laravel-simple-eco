@@ -1,32 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Product</title>
-</head>
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">{{ __('Products') }}</div>
 
-<body>
-    <div style="display:flex; align-items:center; gap: 20px;">
-        @foreach ($products as $product)
-            <div>
-                <p>{{ $product->name }}</p>
-                <img src="{{ url('/storage/images/' . $product->image) }}" alt="product_image" width="100"
-                    height="100">
-                <div style="display:flex; gap: 10px;">
-                    <form action="{{ route('show_product', $product) }}" method="get">
-                        <button>Show</button>
-                    </form>
-                    <form action="{{ route('delete_product', $product) }}" method="post" onsubmit="return confirm('Are you sure?')">
-                        @method('DELETE')
-                        @csrf
-                        <button>Delete</button>
-                    </form>
+                    <div class="card-group m-auto">
+                        @foreach ($products as $product)
+                            <div class="card m-3" style="width: 18rem;">
+                                <img style="" class="card-img-top object-fit-cover p-2" src="{{ url('storage/images/' . $product->image) }}" alt="Card image cap" width="200px" height="200px">
+                                <div class="card-body">
+                                    <p class="card-text">{{ $product->name }}</p>
+                                    <form action="{{ route('show_product', $product) }}" method="get">
+                                        <button type="submit" class="btn btn-primary">Show detail</button>
+                                    </form>
+                                    @if (Auth::check() && Auth::user()->is_admin)
+                                        <form action="{{ route('delete_product', $product) }}" method="post">
+                                            @method('delete')
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger mt-2">Delete product</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
-        @endforeach
+        </div>
     </div>
-</body>
-
-</html>
+@endsection

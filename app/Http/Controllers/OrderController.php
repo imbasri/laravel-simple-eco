@@ -50,8 +50,8 @@ class OrderController extends Controller
 
     public function index_order()
     {
-        $order = Order::all();
-        return view('index_order', compact('order'));
+        $orders = Order::all();
+        return view('index_order', compact('orders'));
     }
 
     public function show_order(Order $order)

@@ -1,39 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Detail</title>
-</head>
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">{{ __('Order Detail') }}</div>
 
-<body>
-    <p>ID : {{ $order->id }}</p>
-    <p>User : {{ $order->user->name }}</p>
-    @foreach ($order->transactions as $t)
-        <img src="{{ url('/storage/images/' . $t->product->image) }}" alt="product_image" width="100" height="100">
-        <p>Product : {{ $t->product->name }}</p>
-        <p>Amount : {{ $t->amount }}</p>
-        <p>Total : Rp.{{ $t->amount * $t->product->price }}</p>
-    @endforeach
+                    @php
+                        $total_price = 0;
+                    @endphp
 
-    <form action="{{ route('show_order', $order) }}" method="get">
-        <button>Back</button>
-    </form>
+                    <div class="card-body">
+                        <h5 class="card-title">Order ID {{ $order->id }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">By {{ $order->user->name }}</h6>
+                        @if ($order->is_paid == true)
+                            <p class="card-text">Paid</p>
+                            <img class="img-thumbnail" src="{{ url('storage/payment/' . $order->payment_receipt) }}" alt="Payment Receipt" srcset="">
+                        @else
+                            <p class="card-text">Unpaid</p>
+                        @endif
+                        <hr>
+                        @foreach ($order->transactions as $transaction)
+                       <div class=" d-flex align-items-center justify-content-flex-start mb-3 shadow-sm rounded-3 p-3">
+                        <img class="object-fit-cover me-4" src="{{ url('storage/images/' . $transaction->product->image) }}" alt="{{ $transaction->product->name }}" height='100px' witdh='100px'>
+                        <h3 class="">{{ $transaction->product->name }} - {{ $transaction->amount }} pcs</h3>
+                        @php
+                            $total_price += $transaction->product->price * $transaction->amount;
+                        @endphp
+                       </div>
+                        @endforeach
+                        <hr>
+                        <p>Total: Rp{{ $total_price }}</p>
+                        <hr>
 
-    @if ($order->is_paid == 0 && $order->payment_receipt == null)
-        <form action="{{ route('submit_payment_receipt', $order) }}" method="post" enctype="multipart/form-data">
-            @csrf
-            <label for="payment">Upload your payment receipt</label><br>
-            <input type="file" name="payment_receipt" id="payment"><br><br>
-            <button type="submit">Submit Payment</button>
-            @if (session('error'))
-                <div class="alert alert-success">
-                    {{ session('error') }}
+                        @if ($order->is_paid == false && $order->payment_receipt == null && !Auth::user()->is_admin)
+                            <form action="{{ route('submit_payment_receipt', $order) }}" method="post"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-group">
+                                    <label>Upload your payment receipt</label>
+                                    <input type="file" name="payment_receipt" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Submit payment</button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
-            @endif
-        </form>
-    @endif
-</body>
-
-</html>
+            </div>
+        </div>
+    </div>
+@endsection

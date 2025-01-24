@@ -1,51 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
-</head>
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">{{ __('Cart') }}</div>
 
-<body>
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <p>{{ $error }}</p>
-        @endforeach
-    @endif
-    <div style="display:flex; align-items:center; gap: 20px;">
-        @foreach ($carts as $cart)
-            <div>
-                <img src="{{ url('/storage/images/' . $cart->product->image) }}" alt="image_cart" width="100"
-                    height="100" />
-                <p>Name : {{ $cart->product->name }}</p>
-                <p>Price : {{ $cart->product->price }}</p>
-                <p>Total : {{ $cart->amount * $cart->product->price }}</p>
-                <form action="{{ route('update_cart', $cart) }}" method="post">
-                    @method('PATCH')
-                    @csrf
-                    <input type="number" name="amount" id="amount" value="{{ $cart->amount }}">
-                    <button>Update</button>
-                </form>
+                    <div class="card-body ">
+                        @if ($errors->any())
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        @endif
+
+                        @php
+                            $total_price = 0;
+                        @endphp
+
+                        <div class="card-group m-auto">
+                            @foreach ($carts as $cart)
+                                <div class="card m-3" style="width: 14rem;">
+                                    <img class="card-img-top object-fit-cover w-100 h-100" src="{{ url('storage/images/' . $cart->product->image) }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ $cart->product->name }}</h5>
+                                        <form action="{{ route('update_cart', $cart) }}" method="post">
+                                            @method('patch')
+                                            @csrf
+                                            @if ($cart->amount > $cart->product->stock)
+                                                <p class="text-danger">Not enough stock available</p>
+                                            @endif
+                                            <p>Stock: {{ ($cart->product->stock  - $cart->amount)}}</p>
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control" aria-describedby="basic-addon2"
+                                                    name="amount" value={{ $cart->amount }}>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="submit">Update
+                                                        amount</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <form action="{{ route('delete_cart', $cart) }}" method="post">
+                                            @method('delete')
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @php
+                                    $total_price += $cart->product->price * $cart->amount;
+                                @endphp
+                            @endforeach
+                        </div>
+                        <div class="d-flex flex-column justify-content-end align-items-end">
+                            <p>Total: Rp{{ $total_price }}</p>
+                            <form action="{{ route('checkout') }}" method="post">
+                                @csrf
+                                <button type="submit" class="btn btn-primary"
+                                    @if ($carts->isEmpty()) disabled @endif>Checkout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <form action="{{ route('delete_cart', $cart) }}" method="post" onsubmit="return confirm('Are you sure?')">
-                @csrf
-                @method('DELETE')
-                <button>Delete</button>
-            </form>
-        @endforeach
+        </div>
     </div>
-
-    <form action="{{ route('index_product') }}" method="get">
-        @csrf
-        <button type="submit">Back</button>
-    </form>
-
-    <form action="{{ route('checkout') }}" method="post">
-        @csrf
-
-        <button type="submit">Checkout</button>
-    </form>
-</body>
-
-</html>
+@endsection
