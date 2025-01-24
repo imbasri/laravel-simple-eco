@@ -5,6 +5,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,13 +20,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return Redirect::route('index_product');
 });
 
 Auth::routes();
-
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // product
 Route::get('/product/create', [ProductController::class, 'create_product'])->name('create_product');
