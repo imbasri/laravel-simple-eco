@@ -26,7 +26,7 @@ class OrderController extends Controller
         $order = Order::create([
             'user_id' => $user_id,
         ]);
-
+           //
         foreach ($cart as $c) {
 
             // delete stock
